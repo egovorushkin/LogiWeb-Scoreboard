@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui" lang="en">
+<h:head>
+    <title>LogiWeb Scoreboard</title>
+    <h:outputStylesheet library="css" name="styles.css"/>
+    <h:outputScript>
+        function onMessage(message) {
+            location.reload();
+        }
+    </h:outputScript>
+</h:head>
+
+
+<h:body>
+    <h:form>
+        <p:panelGrid>
+            <p:row style="margin-bottom:1px">
+                <!-- Statistics of trucks and drivers -->
+                <p:column rowspan="5">
+                    <!-- Truck statistics -->
+                    <p:panelGrid class="p-mt-1">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="2">Trucks</p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column
+                                    style="font-weight: bold">Total</p:column>
+                            <p:column style="font-weight: bold">
+                                <p:badge value="#{scoreboardView.truckStats.total}" styleClass="p-mr-2"
+                                         size="large" severity="primary"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column
+                                    style="font-weight: bold">Available</p:column>
+                            <p:column style="font-weight: bold">
+                                <p:badge value="#{scoreboardView.truckStats.available}" styleClass="p-mr-2"
+                                         size="large" severity="success"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="font-weight: bold">Busy</p:column>
+                            <p:column style="font-weight: bold">
+                                <p:badge value="#{scoreboardView.truckStats.busy}" styleClass="p-mr-2"
+                                         size="large" severity="warning"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column
+                                    style="font-weight: bold">Faulty</p:column>
+                            <p:column style="font-weight: bold">
+                                <p:badge value="#{scoreboardView.truckStats.faulty}" styleClass="p-mr-2"
+                                         size="large" severity="danger"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+                    <!-- Driver statistics -->
+                    <p:panelGrid style="margin-top:20px; margin-bottom: 10px">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="2">Drivers</p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column
+                                    style="font-weight: bold">Total</p:column>
+                            <p:column style="font-weight: bold">
+                                <p:badge value="#{scoreboardView.driverStats.total}" styleClass="p-mr-2"
+                                         size="large" severity="primary"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column
+                                    style="font-weight: bold">Available</p:column>
+                            <p:column style="font-weight: bold">
+                                <p:badge value="#{scoreboardView.driverStats.available}" styleClass="p-mr-2"
+                                         size="large" severity="success"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column
+                                    style="font-weight: bold">Not available</p:column>
+                            <p:column style="font-weight: bold">
+                                <p:badge value="#{scoreboardView.driverStats.notAvailable}" styleClass="p-mr-2"
+                                         size="large" severity="danger"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:column>
+
+                <!-- Latest orders -->
+                <p:column rowspan="11" styleClass="centeredColumnContent">
+                    <p:dataTable var="order"
+                                 value="#{scoreboardView.latestOrders}"
+                                 reflow="true" size="small" style="margin-bottom: 15px">
+                        <f:facet name="header">Latest orders</f:facet>
+                        <p:column headerText="Number" width="40px" style="text-align: center">
+                            <h:outputText value="#{order.id}"/>
+                        </p:column>
+                        <p:column headerText="Cargo" width="60px" style="text-align: center">
+                            <h:outputText value="#{order.cargo.name}"/>
+                        </p:column>
+                        <p:column headerText="Weight of cargo" width="60px" style="text-align: center">
+                            <h:outputText value="#{order.cargo.weight}"/>
+                        </p:column>
+                        <p:column headerText="Status of cargo" width="60px" style="text-align: center">
+                            <h:outputText value="#{order.cargo.status.name}"/>
+                        </p:column>
+                        <p:column headerText="From City" width="70px" style="text-align: center">
+                            <h:outputText value="#{order.fromCity}"/>
+                        </p:column>
+                        <p:column width="20px">
+                            <em class="pi pi-arrow-right"/>
+                        </p:column>
+                        <p:column headerText="To City" width="80px" style="text-align: center">
+                            <h:outputText value="#{order.toCity}"/>
+                        </p:column>
+                        <p:column headerText="Truck" width="50px" style="text-align: center">
+                            <p:tag rendered="#{empty order.truck}"
+                                   severity="danger"
+                                   value="None"/>
+                            <p:tag rendered="#{not empty order.truck}"
+                                   styleClass="p-mr-2" severity="success"
+                                   value="#{order.truck.registrationNumber}"/>
+                        </p:column>
+                        <p:column headerText="Status" width="60px">
+                            <p:tag rendered="#{order.status eq 'COMPLETED'}"
+                                   styleClass="p-mr-2" severity="success"
+                                   value="#{order.status.name}"/>
+                            <p:tag rendered="#{order.status eq 'NOT_COMPLETED'}"
+                                   styleClass="p-mr-2" severity="warning"
+                                   value="#{order.status.name}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+    </h:form>
+
+    <f:websocket channel="websocket" onmessage="onMessage"/>
+
+</h:body>
+</html>
